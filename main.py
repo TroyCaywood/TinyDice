@@ -17,13 +17,14 @@ symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
 with open("data.json") as data_file:
     data = json.load(data_file)
 
-
+# Roll "dice" 5 times and append to index list
 def dice_roll():
     for _ in range(5):
         roll = random.randrange(1, 7)
         index_number_list.append(str(roll))
 
 
+# Clear index list to remove last roll, call roll dice function to roll dice, combine index list into a string
 def word_lookup():
     index_number_list.clear()
     dice_roll()
@@ -31,10 +32,14 @@ def word_lookup():
     return data[index_number]
 
 
+# Assemble password
 def password_assemble():
     password_list = []
 
     try:
+        # Get number from words entry field and use that in a range
+        # For number in range if number is even, append a capitalized word using word_lookup() function
+        # If number is odd, append lowercase word
         for num in range(int(words_entry.get())):
             word = word_lookup()
             if num % 2 == 0:
@@ -42,17 +47,29 @@ def password_assemble():
             else:
                 password_list.append(word)
 
+        # Get number from numbers entry field and choose that many numbers from numbers list
         for _ in range(int(numbers_entry.get())):
             password_list.append(random.choice(numbers))
 
+        # Get number from symbols entry field and choose that many symbols from symbols list
         for _ in range(int(symbols_entry.get())):
             password_list.append(random.choice(symbols))
 
+        # Shuffle the password list to randomize it further
         random.shuffle(password_list)
+
+        # Join the password list into a string using chosen seperator
         password = f"{seperator_entry.get()}".join(password_list)
+
+        # Copy password to clipboard
         pyperclip.copy(password)
+
+        # Display password in a dialog box
         messagebox.showinfo(title="Your Generated Password", message=f"Your password is '{password}'\n"
-                                                                     f"Your password has been copied to your clipboard")
+     
+                                                                 f"Your password has been copied to your clipboard")
+
+    # Do not allow blank entries or letters/symbols
     except ValueError:
         messagebox.showinfo(title="Invalid Entry", message="Only numbers are valid entries for words,"
                                                            " symbols, and numbers")
